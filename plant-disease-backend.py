@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # -------------------------------
 # API Configuration
 # -------------------------------
-API_KEY = "AIzaSyAykFVuQApyKutFmMmDtbmV7xFhcItPnrg"  # Replace with your actual API key
+API_KEY = "-------------------------------"  # Replace with your actual API key
 genai.configure(api_key=API_KEY)
 
 # -------------------------------------

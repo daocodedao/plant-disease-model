@@ -35,7 +35,8 @@ st.markdown("""
 # -------------------------------------
 # 📌 Backend API Configuration
 # -------------------------------------
-API_ENDPOINT = "http://localhost:8000"  # Change this to match your backend API endpoint
+API_ENDPOINT = "http://39.105.194.16:8501"  # Change this to match your backend API endpoint
+
 
 def analyze_image(image_file):
     """Send image to backend API for analysis"""

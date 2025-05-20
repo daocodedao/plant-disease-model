@@ -27,11 +27,41 @@ pip install -r requirements.txt
 
 ```
 # 启动后台服务
-streamlit run app.py
+python plant-disease-backend.py
 # 启动前端服务
-python app.py
+streamlit run plant-disease-front.py --server.port 8502
+
 
 ```
+## frp 配置
+```
+cat /data/work/frp/frpc.ini 
+vim /data/work/frp/frpc.ini
+
+# 后台
+[ssh-PlantBackend]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 8501
+remote_port = 8501
+use_encryption = false
+use_compression = false
+
+[ssh-PlantFront]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 8502
+remote_port = 8502
+use_encryption = false
+use_compression = false
+
+
+# 重启frp
+sudo systemctl restart  supervisor
+sudo supervisorctl reload
+sudo supervisord
+```
+
 
 ## 浏览器打开
 http://localhost:8501/

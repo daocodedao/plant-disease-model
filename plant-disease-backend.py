@@ -271,4 +271,4 @@ if __name__ == "__main__":
     # Load model at startup
     load_model()
     # Run server
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8501)

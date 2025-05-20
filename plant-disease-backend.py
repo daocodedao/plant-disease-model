@@ -235,6 +235,7 @@ async def root():
 async def predict(request: ImageRequest):
     """Process image and return disease prediction with information"""
     try:
+        print("收到请求")
         # Process image
         image_array = preprocess_image(request.image)
         

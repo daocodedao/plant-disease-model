@@ -225,6 +225,7 @@ def get_disease_info(disease_name):
 @app.get("/")
 async def root():
     """Root endpoint with API information"""
+    print("收到请求")
     return {
         "message": "Plant Disease Recognition API",
         "status": "online",

@@ -7,15 +7,17 @@ import base64
 import io
 from PIL import Image
 from typing import Dict, Any, List, Optional
-import google.generativeai as genai
+from openai import OpenAI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 # -------------------------------
 # API Configuration
 # -------------------------------
-API_KEY = "-------------------------------"  # Replace with your actual API key
-genai.configure(api_key=API_KEY)
+client = OpenAI(
+    base_url="http://39.105.194.16:6691/v1/",  # 设置自定义API地址
+    api_key="YOUR_API_KEY"  # 替换为您的API密钥
+)
 
 # -------------------------------------
 # FastAPI Application Setup
@@ -114,93 +116,107 @@ def predict_disease(image_array):
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
 # -------------------------------------
-# Disease Information from Generative AI
+# Disease Information from OpenAI
 # -------------------------------------
 def get_disease_info(disease_name):
-    """Get detailed disease information using Google's Generative AI"""
+    """使用OpenAI获取详细的疾病信息"""
     try:
-        # Clean disease name for better prompt formatting
+        # 清理疾病名称以获得更好的提示格式
         cleaned_name = disease_name.replace('___', ' - ').replace('_', ' ')
         
-        # Create a structured prompt
+        # 创建结构化提示
         prompt = f"""
-        Provide detailed information about the plant disease '{cleaned_name}' with the following sections:
+        提供关于植物疾病'{cleaned_name}'的详细信息，包含以下部分：
         
-        1. Description: A brief overview of what the disease is.
-        2. Causes: What causes this disease (e.g., fungus, bacteria, virus).
-        3. Symptoms: The visual symptoms that appear on the plant.
-        4. Treatment: Recommended treatments and controls.
-        5. Prevention: How to prevent this disease in the future.
-        6. Useful Resources: Suggest types of videos that would be helpful (no actual links).
+        1. 描述：该疾病的简要概述。
+        2. 原因：导致这种疾病的原因（例如，真菌、细菌、病毒）。
+        3. 症状：植物上出现的视觉症状。
+        4. 治疗：推荐的治疗方法和控制措施。
+        5. 预防：如何预防这种疾病。
+        6. 有用资源：建议有帮助的视频类型（不包含实际链接）。
         
-        Format each section with a clear heading.
+        请为每个部分添加清晰的标题。
         """
 
-        # Generate content
-        model = genai.GenerativeModel(model_name="gemini-2.0-flash-thinking-exp")
-        response = model.generate_content(prompt)
+        # 使用新的API格式创建聊天完成
+        response = client.chat.completions.create(
+            model="Qwen/Qwen3-8B",
+            messages=[
+                {"role": "system", "content": "你是一个专业的植物病理学专家。"},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=1000
+        )
         
-        if not response:
+        if not response or not response.choices:
             return {
-                "description": "Information not available.",
-                "symptoms": "Information not available.",
-                "treatment": "Information not available.",
-                "prevention": "Information not available.",
-                "videos": "No resource suggestions available."
+                "description": "信息不可用。",
+                "symptoms": "信息不可用。",
+                "treatment": "信息不可用。",
+                "prevention": "信息不可用。",
+                "videos": "没有可用的资源建议。"
             }
         
-        # Simple parsing of the response into sections
-        content = response.text
+        # 获取生成的内容并清理思考过程标签
+        content = response.choices[0].message.content
         
-        # Extract sections (basic parsing - could be improved with regex)
+        # 清理<think></think>标签及其内容
+        if "<think>" in content and "</think>" in content:
+            think_start = content.find("<think>")
+            think_end = content.find("</think>") + len("</think>")
+            content = content[:think_start] + content[think_end:]
+            content = content.strip()
+        
+        # 提取各个部分（基本解析 - 可以用regex改进）
         sections = {
-            "description": "Information not available.",
-            "symptoms": "Information not available.",
-            "treatment": "Information not available.",
-            "prevention": "Information not available.",
-            "videos": "No resource suggestions available."
+            "description": "信息不可用。",
+            "symptoms": "信息不可用。",
+            "treatment": "信息不可用。",
+            "prevention": "信息不可用。",
+            "videos": "没有可用的资源建议。"
         }
         
-        # Very basic section extraction - in a real app, use regex for better parsing
-        if "Description" in content:
-            description_start = content.find("Description")
-            next_section = content.find("Causes", description_start)
+        # 基本的部分提取 - 在实际应用中，建议使用regex进行更好的解析
+        if "描述" in content:
+            description_start = content.find("描述")
+            next_section = content.find("原因", description_start)
             if next_section > 0:
-                sections["description"] = content[description_start:next_section].replace("Description:", "").strip()
+                sections["description"] = content[description_start:next_section].replace("描述：", "").strip()
         
-        if "Symptoms" in content:
-            symptoms_start = content.find("Symptoms")
-            next_section = content.find("Treatment", symptoms_start)
+        if "症状" in content:
+            symptoms_start = content.find("症状")
+            next_section = content.find("治疗", symptoms_start)
             if next_section > 0:
-                sections["symptoms"] = content[symptoms_start:next_section].replace("Symptoms:", "").strip()
+                sections["symptoms"] = content[symptoms_start:next_section].replace("症状：", "").strip()
         
-        if "Treatment" in content:
-            treatment_start = content.find("Treatment")
-            next_section = content.find("Prevention", treatment_start)
+        if "治疗" in content:
+            treatment_start = content.find("治疗")
+            next_section = content.find("预防", treatment_start)
             if next_section > 0:
-                sections["treatment"] = content[treatment_start:next_section].replace("Treatment:", "").strip()
+                sections["treatment"] = content[treatment_start:next_section].replace("治疗：", "").strip()
         
-        if "Prevention" in content:
-            prevention_start = content.find("Prevention")
-            next_section = content.find("Useful Resources", prevention_start)
+        if "预防" in content:
+            prevention_start = content.find("预防")
+            next_section = content.find("有用资源", prevention_start)
             if next_section > 0:
-                sections["prevention"] = content[prevention_start:next_section].replace("Prevention:", "").strip()
+                sections["prevention"] = content[prevention_start:next_section].replace("预防：", "").strip()
             else:
-                sections["prevention"] = content[prevention_start:].replace("Prevention:", "").strip()
+                sections["prevention"] = content[prevention_start:].replace("预防：", "").strip()
         
-        if "Useful Resources" in content:
-            resources_start = content.find("Useful Resources")
-            sections["videos"] = content[resources_start:].replace("Useful Resources:", "").strip()
+        if "有用资源" in content:
+            resources_start = content.find("有用资源")
+            sections["videos"] = content[resources_start:].replace("有用资源：", "").strip()
         
         return sections
         
     except Exception as e:
         return {
-            "description": f"Error retrieving information: {str(e)}",
-            "symptoms": "Information not available.",
-            "treatment": "Information not available.",
-            "prevention": "Information not available.",
-            "videos": "No resource suggestions available."
+            "description": f"获取信息时出错：{str(e)}",
+            "symptoms": "信息不可用。",
+            "treatment": "信息不可用。",
+            "prevention": "信息不可用。",
+            "videos": "没有可用的资源建议。"
         }
 
 # -------------------------------------

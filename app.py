@@ -6,10 +6,10 @@ import base64
 import json
 
 # -------------------------------------
-# 📌 Streamlit Page Configuration
+# 📌 Streamlit 页面配置
 # -------------------------------------
 st.set_page_config(
-    page_title="Plant Disease Recognition System",
+    page_title="植物病害识别系统",
     page_icon="🌿",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -69,236 +69,230 @@ if 'prediction_result' not in st.session_state:
 # 📌 Sidebar Navigation
 # -------------------------------------
 with st.sidebar:
-    st.title("Plant Care")
-    st.markdown("### 🌿 AI-Powered Plant Doctor")
+    st.title("植物护理")
+    st.markdown("### 🌿 AI植物医生")
     
     st.markdown("---")
-    app_mode = st.radio("Navigation", ["Home", "Disease Recognition", "Plant Care Guide", "About"])
+    app_mode = st.radio("导航", ["首页", "病害识别", "植物护理指南", "关于我们"])
     
     st.markdown("---")
-    st.markdown("#### How to use")
+    st.markdown("#### 使用说明")
     st.info("""
-    1. Upload a clear image of the plant leaf
-    2. Click 'Analyze Image'
-    3. Review the diagnosis and treatment plan
+    1. 上传一张清晰的植物叶片图片
+    2. 点击'分析图片'
+    3. 查看诊断结果和治疗方案
     """)
     
     st.markdown("---")
-    st.markdown("#### Developed with ❤️ by Plant Care Team")
+    st.markdown("#### 由植物护理团队用❤️开发")
 
 # -------------------------------------
 # 📌 Main Page Logic
 # -------------------------------------
-if app_mode == "Home":
-    st.title("🌿 Plant Disease Recognition System")
+if app_mode == "首页":
+    st.title("🌿 植物病害识别系统")
     
     col1, col2 = st.columns([3, 2])
     
     with col1:
-        st.image("homepage.jpg", use_column_width=True)
+        st.image("images/homepage.jpg", use_container_width=True)
     
     with col2:
         st.markdown("""
-        ## Welcome to Plant Care! 👋
+        ## 欢迎使用植物护理！👋
         
-        Our AI-powered tool helps you:
+        我们的AI驱动工具可以帮助您：
         
-        - **Identify** plant diseases quickly and accurately
-        - **Learn** about disease causes and symptoms
-        - **Get** personalized treatment recommendations
-        - **Prevent** future plant health issues
+        - **识别**植物病害，快速准确
+        - **了解**病害原因和症状
+        - **获取**个性化治疗建议
+        - **预防**未来的植物健康问题
         
-        Simply upload a photo of your plant's leaves, and our AI will do the rest!
+        只需上传植物叶片的照片，我们的AI就能完成剩下的工作！
         """)
     
     st.markdown("---")
     
-    st.header("Featured Plant Diseases")
+    st.header("常见植物病害")
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.subheader("Tomato Late Blight")
-        st.image("https://www.plantvillage.psu.edu/sites/plantvillage/files/Tomato_Late_blight1_1.jpg", use_column_width=True)
-        st.markdown("A devastating disease causing brown lesions and white fuzzy growth.")
+        st.subheader("番茄晚疫病")
+        st.image("images/Tomato_Late_blight.jpg", use_container_width=True)
+        st.markdown("一种严重的病害，导致褐色病斑和白色霉状物。")
         
     with col2:
-        st.subheader("Apple Scab")
-        st.image("https://www.gardeningknowhow.com/wp-content/uploads/2020/11/apple-scab.jpg", use_column_width=True)
-        st.markdown("Causes dark, scabby lesions on leaves and fruits.")
+        st.subheader("苹果黑星病")
+        st.image("images/apple-scab.jpg", use_container_width=True)
+        st.markdown("在叶片和果实上造成深色、scar痕状病斑。")
         
     with col3:
-        st.subheader("Leaf Spot")
-        st.image("https://www.planetnatural.com/wp-content/uploads/2012/12/leaf-spot.jpg", use_column_width=True)
-        st.markdown("Common fungal infection with circular spots and yellowing.")
+        st.subheader("叶斑病")
+        st.image("images/leaf-spot.jpg", use_container_width=True)
+        st.markdown("常见的真菌感染，表现为圆形斑点和叶片发黄。")
 
-elif app_mode == "Disease Recognition":
-    st.title("🔍 Disease Recognition")
+elif app_mode == "病害识别":
+    st.title("🔍 病害识别")
     
     st.markdown("""
-    Upload a clear image of your plant's leaf to diagnose any potential diseases.
-    For best results, ensure good lighting and focus on the affected area.
+    上传一张清晰的植物叶片图片来诊断潜在的病害。
+    为获得最佳结果，请确保光线充足并聚焦于受影响区域。
     """)
     
-    uploaded_file = st.file_uploader("Upload an image...", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("上传图片...", type=["jpg", "jpeg", "png"])
     
     if uploaded_file is not None:
         col1, col2 = st.columns([2, 3])
         
         with col1:
-            st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+            st.image(uploaded_file, caption="已上传图片", use_container_width=True)
         
         with col2:
-            analyze_clicked = st.button("🔬 Analyze Image", key="analyze_button")
+            analyze_clicked = st.button("🔬 分析图片", key="analyze_button")
             
             if analyze_clicked:
-                with st.spinner('Analyzing your plant...'):
-                    # Send to backend API
+                with st.spinner('正在分析您的植物...'):
                     result = analyze_image(uploaded_file)
                     
                     if "error" in result:
-                        st.error(f"Error: {result['error']}")
+                        st.error(f"错误: {result['error']}")
                     else:
                         st.session_state['analyzed'] = True
                         st.session_state['prediction_result'] = result
 
-        # Display results if analysis was successful
         if st.session_state['analyzed'] and st.session_state['prediction_result']:
             result = st.session_state['prediction_result']
             
             st.markdown("---")
-            st.header("Diagnosis Results")
+            st.header("诊断结果")
             
-            # Result container
             st.markdown('<div class="report-container">', unsafe_allow_html=True)
             
             if "healthy" in result["disease_name"].lower():
-                st.markdown(f'<span class="healthy-tag">HEALTHY</span>', unsafe_allow_html=True)
-                st.success(f"Good news! Your plant appears to be healthy.")
+                st.markdown(f'<span class="healthy-tag">健康</span>', unsafe_allow_html=True)
+                st.success(f"好消息！您的植物看起来很健康。")
             else:
-                st.markdown(f'<span class="disease-tag">DISEASE DETECTED</span>', unsafe_allow_html=True)
-                st.warning(f"Disease detected: {result['disease_name'].replace('___', ' - ').replace('_', ' ')}")
+                st.markdown(f'<span class="disease-tag">发现病害</span>', unsafe_allow_html=True)
+                st.warning(f"检测到病害: {result['disease_name'].replace('___', ' - ').replace('_', ' ')}")
             
             st.markdown("</div>", unsafe_allow_html=True)
             
-            # Don't show disease info for healthy plants
             if "healthy" not in result["disease_name"].lower():
                 st.markdown("---")
-                st.header("Disease Information")
+                st.header("病害信息")
                 
-                tabs = st.tabs(["Description", "Symptoms", "Treatment", "Prevention"])
+                tabs = st.tabs(["描述", "症状", "治疗", "预防"])
                 
                 with tabs[0]:
-                    st.markdown(result.get("description", "No description available"))
+                    st.markdown(result.get("description", "暂无描述信息"))
                 
                 with tabs[1]:
-                    st.markdown(result.get("symptoms", "No symptoms information available"))
+                    st.markdown(result.get("symptoms", "暂无症状信息"))
                 
                 with tabs[2]:
-                    st.markdown(result.get("treatment", "No treatment information available"))
+                    st.markdown(result.get("treatment", "暂无治疗信息"))
                     
                     st.markdown('<div class="info-box">', unsafe_allow_html=True)
-                    st.markdown("⚠️ **Remember**: Always verify treatments with a professional before application.")
+                    st.markdown("⚠️ **提醒**: 在应用任何治疗方案前，请务必咨询专业人士。")
                     st.markdown("</div>", unsafe_allow_html=True)
                 
                 with tabs[3]:
-                    st.markdown(result.get("prevention", "No prevention information available"))
+                    st.markdown(result.get("prevention", "暂无预防信息"))
                 
-                # Video suggestions
                 if "videos" in result:
                     st.markdown("---")
-                    st.subheader("Helpful Resources")
+                    st.subheader("相关资源")
                     st.markdown(result["videos"])
 
-elif app_mode == "Plant Care Guide":
-    st.title("🌱 Plant Care Guide")
+elif app_mode == "植物护理指南":
+    st.title("🌱 植物护理指南")
     
     st.markdown("""
-    Explore our comprehensive guide to keeping your plants healthy and thriving.
+    探索我们全面的植物健康护理指南。
     """)
     
     care_topics = [
-        "Watering Basics", 
-        "Nutrient Management", 
-        "Pest Prevention", 
-        "Seasonal Care",
-        "Indoor Plant Tips"
+        "浇水基础", 
+        "营养管理", 
+        "病虫害预防", 
+        "季节性护理",
+        "室内植物技巧"
     ]
     
-    selected_topic = st.selectbox("Select a topic:", care_topics)
+    selected_topic = st.selectbox("选择主题:", care_topics)
     
-    if selected_topic == "Watering Basics":
-        st.subheader("Watering Basics")
+    if selected_topic == "浇水基础":
+        st.subheader("浇水基础")
         st.markdown("""
-        ### Key Principles
-        - Water deeply but infrequently to encourage deep root growth
-        - Water at the base of plants to avoid wet foliage
-        - Morning watering is generally best
+        ### 关键原则
+        - 深浇水但频率要低，以促进根系深层生长
+        - 在植物根部浇水，避免弄湿叶片
+        - 最佳浇水时间是早晨
         
-        ### Signs of Overwatering
-        - Yellowing leaves
-        - Soft, mushy stems
-        - Mold or fungus on soil surface
+        ### 浇水过多的迹象
+        - 叶片发黄
+        - 茎秆变软发烂
+        - 土壤表面出现霉菌
         
-        ### Signs of Underwatering
-        - Wilting despite moist soil
-        - Crispy, brown leaf edges
-        - Slow growth
+        ### 浇水不足的迹象
+        - 土壤湿润但植物萎蔫
+        - 叶片边缘发脆变褐
+        - 生长缓慢
         """)
     
-    elif selected_topic == "Nutrient Management":
-        st.subheader("Nutrient Management")
+    elif selected_topic == "营养管理":
+        st.subheader("营养管理")
         st.markdown("""
-        ### Essential Nutrients
-        - **Nitrogen (N)**: Leaf growth and green color
-        - **Phosphorus (P)**: Root growth, flowering, fruiting
-        - **Potassium (K)**: Overall plant health and disease resistance
+        ### 基本营养元素
+        - **氮(N)**: 促进叶片生长和绿色素形成
+        - **磷(P)**: 促进根系生长、开花和结果
+        - **钾(K)**: 增强整体健康和抗病能力
         
-        ### Organic vs. Synthetic Fertilizers
-        Organic fertilizers release nutrients slowly and improve soil structure.
-        Synthetic fertilizers provide immediate nutrients but don't improve soil.
+        ### 有机肥料vs化肥
+        有机肥料缓慢释放养分并改善土壤结构。
+        化肥提供即时养分但不改善土壤。
         
-        ### Application Tips
-        - Follow package directions - more isn't better!
-        - Apply fertilizers to moist soil to prevent root burn
-        - Reduce fertilizer in fall/winter when growth slows
+        ### 施肥技巧
+        - 严格按照包装说明使用 - 过量施肥反而有害！
+        - 在湿润的土壤中施肥，防止根系灼伤
+        - 秋冬季生长缓慢时减少施肥
         """)
 
-elif app_mode == "About":
-    st.title("About Plant Care")
+elif app_mode == "关于我们":
+    st.title("关于植物护理")
     
     st.markdown("""
-    ## Our Mission
+    ## 我们的使命
     
-    At Plant Care, we believe everyone deserves healthy, thriving plants. Our AI-powered 
-    tool makes professional plant disease diagnosis accessible to everyone, from hobby 
-    gardeners to professional farmers.
+    在植物护理，我们相信每个人都应该拥有健康茁壮的植物。我们的AI驱动工具让专业的植物病害诊断
+    服务变得触手可及，无论是业余园艺爱好者还是专业农民都能受益。
     
-    ## Technology
+    ## 技术实力
     
-    Our system uses a deep learning convolutional neural network (CNN) trained on over 
-    87,000 images of plant leaves across 38 different classes of plant diseases and healthy plants.
+    我们的系统使用深度学习卷积神经网络(CNN)，在超过87,000张植物叶片图片上进行训练，
+    涵盖38种不同的植物病害类别和健康植物。
     
-    ## Features
+    ## 主要特点
     
-    - **Fast Analysis**: Get results in seconds
-    - **Detailed Information**: Learn about causes, symptoms, and treatments
-    - **Prevention Tips**: Avoid future outbreaks
-    - **High Accuracy**: Our model achieves over 96% accuracy on test datasets
+    - **快速分析**: 几秒钟内获得结果
+    - **详细信息**: 了解病因、症状和治疗方法
+    - **预防建议**: 避免未来发生病害
+    - **高准确度**: 我们的模型在测试数据集上达到96%以上的准确率
     
-    ## Development Team
+    ## 开发团队
     
-    Our interdisciplinary team brings together expertise in:
-    - Machine Learning & AI
-    - Plant Pathology
-    - Agricultural Science
-    - Software Development
+    我们的跨学科团队汇集了以下领域的专业知识：
+    - 机器学习与人工智能
+    - 植物病理学
+    - 农业科学
+    - 软件开发
     """)
     
     st.markdown("---")
     
-    st.subheader("Privacy & Data Usage")
+    st.subheader("隐私与数据使用")
     st.info("""
-    Your uploaded images are processed securely and are not stored permanently 
-    unless you explicitly opt in to contribute to our dataset for improving the model.
+    您上传的图片会被安全处理，除非您明确同意用于改进模型，
+    否则不会被永久存储。
     """)

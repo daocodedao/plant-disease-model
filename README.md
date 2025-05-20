@@ -24,5 +24,5 @@ A web-based application that uses machine learning to detect plant diseases from
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/plant-disease-predictor.git
+   git clone https://github.com/shubham7854/plant-disease-model
    cd plant-disease-predictor

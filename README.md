@@ -42,8 +42,8 @@ vim /data/work/frp/frpc.ini
 [ssh-PlantBackend]
 type = tcp
 local_ip = 127.0.0.1
-local_port = 8501
-remote_port = 8501
+local_port = 8503
+remote_port = 8503
 use_encryption = false
 use_compression = false
 

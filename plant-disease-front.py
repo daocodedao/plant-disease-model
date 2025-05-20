@@ -46,8 +46,9 @@ def analyze_image(image_file):
         encoded = base64.b64encode(img_bytes).decode('utf-8')
         
         # Send to backend
+        reUrl = f"{API_ENDPOINT}/predict"
         response = requests.post(
-            f"{API_ENDPOINT}/predict",
+            reUrl,
             json={"image": encoded, "filename": image_file.name}
         )
         
@@ -56,7 +57,7 @@ def analyze_image(image_file):
         else:
             return {"error": f"API Error: {response.status_code}", "details": response.text}
     except Exception as e:
-        return {"error": f"Connection Error: {str(e)}"}
+        return {"error": f"Connection Error: {reUrl} {str(e)}"}
 
 # -------------------------------------
 # 📌 Initialize Session State

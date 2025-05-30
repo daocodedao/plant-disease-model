@@ -65,5 +65,7 @@ sudo supervisord
 
 ## 浏览器打开
 http://localhost:8501/
+
+
 http://39.105.194.16:8502/
 ![前端展示](images/WX20250520-125949.png)

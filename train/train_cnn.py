@@ -7,17 +7,16 @@ import os
 import time
 from tqdm import tqdm
 
-# Download Dataset using Kaggle API
-os.environ['KAGGLE_CONFIG_DIR'] = './secrets/.kaggle'
-print("Downloading dataset...")
-import kaggle
-kaggle.api.dataset_download_files('vipoooool/new-plant-diseases-dataset', path='dataset', unzip=True)
-print("Dataset Downloaded Successfully!")
+import kagglehub
+download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
+print("Path to dataset files:", download_path)
+dataset_path = f"{download_path}/New Plant Diseases Dataset(Augmented)/New Plant Diseases Dataset(Augmented)"
+
 
 # Data Preparation with Progress Bar
 datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2, rotation_range=20, zoom_range=0.2, horizontal_flip=True)
-dataset_path = 'dataset/'
-print("Preparing dataset...")
+# dataset_path = 'dataset/'
+# print("Preparing dataset...")
 
 with tqdm(total=100, desc="Dataset Preparation", unit="%") as pbar:
     train_gen = datagen.flow_from_directory(dataset_path, target_size=(150, 150), batch_size=32, class_mode='binary', subset='training')

@@ -3,14 +3,11 @@ import pandas as pd
 import seaborn as sns
 import tensorflow as tf
 from tensorflow import keras
-import kagglehub
-
-# Download latest version
-download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
-
-print("Path to dataset files:", download_path)
-
 import os
+
+import kagglehub
+download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
+print("Path to dataset files:", download_path)
 
 dataset_path = f"{download_path}/New Plant Diseases Dataset(Augmented)/New Plant Diseases Dataset(Augmented)"
 trainDir = os.path.join(dataset_path, "train")

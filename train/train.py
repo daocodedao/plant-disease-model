@@ -62,42 +62,25 @@ cnn.add(
 cnn.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(
-    tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu")
-)
+cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
 cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(
-    tf.keras.layers.Conv2D(
-        filters=128, kernel_size=3, padding="same", activation="relu"
-    )
-)
+cnn.add(tf.keras.layers.Conv2D(filters=128, kernel_size=3, padding="same", activation="relu"))
 cnn.add(tf.keras.layers.Conv2D(filters=128, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(
-    tf.keras.layers.Conv2D(
-        filters=256, kernel_size=3, padding="same", activation="relu"
-    )
-)
+cnn.add(tf.keras.layers.Conv2D(filters=256, kernel_size=3, padding="same", activation="relu"))
 cnn.add(tf.keras.layers.Conv2D(filters=256, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(
-    tf.keras.layers.Conv2D(
-        filters=512, kernel_size=3, padding="same", activation="relu"
-    )
-)
+cnn.add(tf.keras.layers.Conv2D(filters=512, kernel_size=3, padding="same", activation="relu"))
 cnn.add(tf.keras.layers.Conv2D(filters=512, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
 cnn.add(tf.keras.layers.Dropout(0.25))
-
 cnn.add(tf.keras.layers.Flatten())
-
 cnn.add(tf.keras.layers.Dense(units=1500, activation="relu"))
-
 cnn.add(tf.keras.layers.Dropout(0.4))  # To avoid overfitting
 
 # Output Layer
@@ -136,9 +119,7 @@ with open("training_hist.json", "w") as f:
 print(training_history.history.keys())
 
 epochs = [i for i in range(1, 11)]
-plt.plot(
-    epochs, training_history.history["accuracy"], color="red", label="Training Accuracy"
-)
+plt.plot( epochs, training_history.history["accuracy"], color="red", label="Training Accuracy")
 plt.plot(
     epochs,
     training_history.history["val_accuracy"],

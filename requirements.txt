@@ -3,7 +3,7 @@ fastapi
 uvicorn
 streamlit
 pydantic
-tensorflow
+
 numpy
 pillow
 google-generativeai
@@ -17,3 +17,5 @@ seaborn
 kagglehub
 plotly
 scipy
+tensorflow; sys_platform == "darwin"
+tensorflow-gpu; sys_platform == "linux"

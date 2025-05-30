@@ -16,4 +16,4 @@ matplotlib
 seaborn
 kagglehub
 plotly
-kaggle
+scipy

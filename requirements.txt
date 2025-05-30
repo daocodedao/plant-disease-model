@@ -12,3 +12,7 @@ python-multipart
 requests
 python-dotenv
 openai
+matplotlib
+seaborn
+kagglehub
+plotly

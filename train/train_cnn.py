@@ -12,6 +12,8 @@ download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset
 print("Path to dataset files:", download_path)
 dataset_path = f"{download_path}/New Plant Diseases Dataset(Augmented)/New Plant Diseases Dataset(Augmented)"
 
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+
 # 检查 GPU 是否可用
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:

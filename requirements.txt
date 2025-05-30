@@ -17,5 +17,4 @@ seaborn
 kagglehub
 plotly
 scipy
-tensorflow; sys_platform == "darwin"
-tensorflow-gpu; sys_platform == "linux"
+tensorflow

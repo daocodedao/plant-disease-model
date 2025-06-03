@@ -220,3 +220,6 @@ else:
     plt.savefig(confusion_matrix_path, dpi=300, bbox_inches='tight')
     print(f"Confusion matrix saved to {confusion_matrix_path}")
 
+# scp -r  -P 10067 fxbox@frp.fxait.com:/data/work/plant-disease-model/model/trained_plant_disease_model.keras ./model/ 
+# scp -r  -P 10067 fxbox@frp.fxait.com:/data/work/plant-disease-model/model/confusion_matrix.png ./model/ 
+# scp -r  -P 10067 fxbox@frp.fxait.com:/data/work/plant-disease-model/model/accuracy_plot.png ./model/ 

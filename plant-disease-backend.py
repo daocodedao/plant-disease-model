@@ -87,8 +87,10 @@ def load_model():
     """
     global model
     if model is None:
+        # 原始的模型
         # model = tf.keras.models.load_model("new_trained_plant_disease_model.keras")
-        model = tf.keras.models.load_model("model/model.h5")
+        # 自己训练的模型
+        model = tf.keras.models.load_model("model/trained_plant_disease_model.keras")
     return model
 
 # -------------------------------------

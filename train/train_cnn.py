@@ -17,15 +17,17 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 # 检查 GPU 是否可用
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
-    try:
-        # 设置 GPU 内存增长，避免一次性占用所有显存
-        for gpu in gpus:
-            tf.config.experimental.set_memory_growth(gpu, True)
-        print("Using GPU for training")
-    except RuntimeError as e:
-        print(f"Error setting GPU memory growth: {e}")
-else:
-    print("No GPU available, using CPU for training")
+  # Restrict TensorFlow to only use the first GPU
+  try:
+    tf.config.set_visible_devices(gpus[0], 'GPU')
+    logical_gpus = tf.config.list_logical_devices('GPU')
+    print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPU")
+  except RuntimeError as e:
+    # Visible devices must be set before GPUs have been initialized
+    print(e)
+
+tf.debugging.set_log_device_placement(True)
+
 
 # Data Preparation with Progress Bar
 datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2, rotation_range=20, zoom_range=0.2, horizontal_flip=True)

@@ -21,3 +21,4 @@ scipy
 tensorflow; sys_platform == "darwin" 
 # gpu requirements
 tensorflow[and-cuda]; sys_platform == "linux" 
+sklearn

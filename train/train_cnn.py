@@ -17,7 +17,7 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 # 检查 GPU 是否可用
 gpus = tf.config.list_physical_devices('GPU')
 print(gpus)
-exit(0)
+# exit(0)
 
 if gpus:
   # Restrict TensorFlow to only use the first GPU

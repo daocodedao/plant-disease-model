@@ -12,39 +12,58 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 # -------------------------------
-# API Configuration
+# API 配置
 # -------------------------------
+# 创建 OpenAI 客户端实例，设置自定义 API 地址和 API 密钥
 client = OpenAI(
     base_url="http://39.105.194.16:6691/v1/",  # 设置自定义API地址
     api_key="YOUR_API_KEY"  # 替换为您的API密钥
 )
 
 # -------------------------------------
-# FastAPI Application Setup
+# FastAPI 应用设置
 # -------------------------------------
+# 创建 FastAPI 应用实例，设置标题、描述和版本
 app = FastAPI(
     title="Plant Disease Recognition API",
     description="Backend API for the Plant Disease Recognition System",
     version="1.0.0"
 )
 
-# Add CORS middleware to allow requests from the frontend
+# 添加 CORS 中间件，允许来自前端的请求
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=["*"],  # 在生产环境中，替换为特定的来源
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # -------------------------------------
-# Data Models
+# 数据模型
 # -------------------------------------
 class ImageRequest(BaseModel):
-    image: str  # Base64 encoded image
+    """
+    图像请求数据模型，用于接收前端发送的图像信息。
+    Attributes:
+        image (str): 经过 Base64 编码的图像数据。
+        filename (str): 图像文件的名称。
+    """
+    image: str  # Base64 编码的图像
     filename: str
 
 class PredictionResponse(BaseModel):
+    """
+    预测响应数据模型，用于返回植物病害预测结果和相关信息。
+    Attributes:
+        disease_name (str): 预测的病害名称。
+        confidence (float): 预测的置信度。
+        description (Optional[str]): 病害描述，可选参数。
+        symptoms (Optional[str]): 病害症状，可选参数。
+        treatment (Optional[str]): 治疗建议，可选参数。
+        prevention (Optional[str]): 预防措施，可选参数。
+        videos (Optional[str]): 相关视频建议，可选参数。
+    """
     disease_name: str
     confidence: float
     description: Optional[str] = None
@@ -54,19 +73,28 @@ class PredictionResponse(BaseModel):
     videos: Optional[str] = None
 
 # -------------------------------------
-# Model Loading
+# 模型加载
 # -------------------------------------
+# 全局变量，用于存储加载的模型
 model = None
 
 def load_model():
+    """
+    加载植物病害识别模型。
+    如果模型尚未加载，则从文件系统加载模型；如果已经加载，则直接返回。
+    Returns:
+        tf.keras.Model: 加载好的 TensorFlow 模型。
+    """
     global model
     if model is None:
-        model = tf.keras.models.load_model("new_trained_plant_disease_model.keras")
+        # model = tf.keras.models.load_model("new_trained_plant_disease_model.keras")
+        model = tf.keras.models.load_model("model/model.h5")
     return model
 
 # -------------------------------------
-# Disease Classes
+# 病害类别
 # -------------------------------------
+# 定义所有可能的植物病害类别
 class_names = [
     'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew',
@@ -85,19 +113,27 @@ class_names = [
 ]
 
 # -------------------------------------
-# Image Processing and Prediction
+# 图像预处理和预测
 # -------------------------------------
 def preprocess_image(image_data):
-    """Process base64 encoded image for model prediction"""
+    """
+    处理 Base64 编码的图像，为模型预测做准备。
+    Args:
+        image_data (str): Base64 编码的图像数据。
+    Returns:
+        np.ndarray: 处理后的图像数组，可直接输入到模型中进行预测。
+    Raises:
+        HTTPException: 如果图像处理过程中出现错误，抛出 400 状态码的异常。
+    """
     try:
-        # Decode base64 image
+        # 解码 Base64 图像
         decoded_image = base64.b64decode(image_data)
         image = Image.open(io.BytesIO(decoded_image))
         
-        # Resize and normalize
+        # 调整图像大小并归一化
         image = image.resize((128, 128))
         image_array = tf.keras.preprocessing.image.img_to_array(image)
-        image_array = np.expand_dims(image_array, axis=0)  # Add batch dimension
+        image_array = np.expand_dims(image_array, axis=0)  # 添加批次维度
         
         return image_array
     except Exception as e:
@@ -107,8 +143,11 @@ def predict_disease(image_array):
     """Make prediction using the model"""
     try:
         model = load_model()
+        # 使用加载好的模型对预处理后的图像数组进行预测，得到每个类别的预测概率
         predictions = model.predict(image_array)
+        # 找出预测概率数组中概率最大的元素的索引，该索引对应预测的病害类别
         predicted_index = np.argmax(predictions, axis=1)[0]
+        # 获取预测概率数组中对应预测类别的概率值，并将其转换为百分比形式
         confidence = float(predictions[0][predicted_index] * 100)
         
         return predicted_index, confidence
@@ -116,12 +155,18 @@ def predict_disease(image_array):
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
 # -------------------------------------
-# Disease Information from OpenAI
+# 从 OpenAI 获取病害信息
 # -------------------------------------
 def get_disease_info(disease_name):
-    """使用OpenAI获取详细的疾病信息"""
+    """
+    使用 OpenAI 获取详细的植物病害信息。
+    Args:
+        disease_name (str): 病害名称。
+    Returns:
+        Dict[str, str]: 包含病害描述、症状、治疗、预防和相关视频建议的字典。
+    """
     try:
-        # 清理疾病名称以获得更好的提示格式
+        # 清理病害名称以获得更好的提示格式
         cleaned_name = disease_name.replace('___', ' - ').replace('_', ' ')
         
         # 创建结构化提示
@@ -138,7 +183,7 @@ def get_disease_info(disease_name):
         请为每个部分添加清晰的标题。
         """
 
-        # 使用新的API格式创建聊天完成
+        # 使用新的 API 格式创建聊天完成
         response = client.chat.completions.create(
             model="Qwen/Qwen3-8B",
             messages=[
@@ -168,7 +213,7 @@ def get_disease_info(disease_name):
             content = content[:think_start] + content[think_end:]
             content = content.strip()
         
-        # 提取各个部分（基本解析 - 可以用regex改进）
+        # 提取各个部分（基本解析 - 可以用 regex 改进）
         sections = {
             "description": "信息不可用。",
             "symptoms": "信息不可用。",
@@ -177,7 +222,7 @@ def get_disease_info(disease_name):
             "videos": "没有可用的资源建议。"
         }
         
-        # 基本的部分提取 - 在实际应用中，建议使用regex进行更好的解析
+        # 基本的部分提取 - 在实际应用中，建议使用 regex 进行更好的解析
         if "描述" in content:
             description_start = content.find("描述")
             next_section = content.find("原因", description_start)
@@ -220,11 +265,15 @@ def get_disease_info(disease_name):
         }
 
 # -------------------------------------
-# API Endpoints
+# API 端点
 # -------------------------------------
 @app.get("/")
 async def root():
-    """Root endpoint with API information"""
+    """
+    根端点，返回 API 的基本信息。
+    Returns:
+        Dict[str, str]: 包含 API 消息、状态和版本的字典。
+    """
     print("收到请求")
     return {
         "message": "Plant Disease Recognition API",
@@ -234,22 +283,30 @@ async def root():
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: ImageRequest):
-    """Process image and return disease prediction with information"""
+    """
+    处理图像并返回植物病害预测结果和相关信息。
+    Args:
+        request (ImageRequest): 包含 Base64 编码图像和文件名的请求数据。
+    Returns:
+        PredictionResponse: 包含病害名称、置信度和相关信息的响应数据。
+    Raises:
+        HTTPException: 如果处理请求过程中出现错误，抛出 500 状态码的异常。
+    """
     try:
         print("收到请求")
-        # Process image
+        # 处理图像
         image_array = preprocess_image(request.image)
         
-        # Make prediction
+        # 进行预测
         predicted_index, confidence = predict_disease(image_array)
         disease_name = class_names[predicted_index]
         
-        # Get disease information for non-healthy plants
+        # 为非健康植物获取病害信息
         disease_info = {}
         if "healthy" not in disease_name.lower():
             disease_info = get_disease_info(disease_name)
         
-        # Prepare response
+        # 准备响应
         response = {
             "disease_name": disease_name,
             "confidence": confidence,
@@ -263,14 +320,18 @@ async def predict(request: ImageRequest):
 
 @app.get("/classes")
 async def get_classes():
-    """Return all possible disease classes"""
+    """
+    返回所有可能的植物病害类别。
+    Returns:
+        Dict[str, List[str]]: 包含所有病害类别的字典。
+    """
     return {"classes": class_names}
 
 # -------------------------------------
-# Server Startup
+# 服务器启动
 # -------------------------------------
 if __name__ == "__main__":
-    # Load model at startup
+    # 在启动时加载模型
     load_model()
-    # Run server
+    # 运行服务器
     uvicorn.run(app, host="0.0.0.0", port=8503)

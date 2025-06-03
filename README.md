@@ -71,3 +71,11 @@ http://39.105.194.16:8502/
 ![前端展示](images/front1.png)
 ![前端展示](images/front2.png)
 ![前端展示](images/front3.png)
+
+
+# 训练
+## tensorflow
+
+```
+python train/train_cnn_0.py
+```

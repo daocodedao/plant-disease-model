@@ -17,5 +17,5 @@ seaborn
 kagglehub
 plotly
 scipy
-tensorflow
+# tensorflow
 tensorflow[and-cuda]

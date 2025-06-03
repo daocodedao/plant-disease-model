@@ -18,3 +18,4 @@ kagglehub
 plotly
 scipy
 tensorflow
+tensorflow[and-cuda]

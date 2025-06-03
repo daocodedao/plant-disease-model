@@ -35,7 +35,12 @@ st.markdown("""
 # -------------------------------------
 # 📌 Backend API Configuration
 # -------------------------------------
-API_ENDPOINT = "http://39.105.194.16:8503"  # Change this to match your backend API endpoint
+import sys
+# API_ENDPOINT = "http://39.105.194.16:8503"  # Change this to match your backend API endpoint
+if sys.platform == 'darwin':
+    API_ENDPOINT = "http://0.0.0.0:8503"
+else:
+    API_ENDPOINT = "http://39.105.194.16:8503" 
 
 
 def analyze_image(image_file):

@@ -4,13 +4,16 @@ import seaborn as sns
 import tensorflow as tf
 from tensorflow import keras
 import os
-
 import kagglehub
+
 download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
 print("Path to dataset files:", download_path)
 
 dataset_path = f"{download_path}/New Plant Diseases Dataset(Augmented)/New Plant Diseases Dataset(Augmented)"
 trainDir = os.path.join(dataset_path, "train")
+
+tf.debugging.set_log_device_placement(True)
+
 print("trainDir:", trainDir)
 training_set = tf.keras.utils.image_dataset_from_directory(
     trainDir,
@@ -62,19 +65,33 @@ cnn.add(
 cnn.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
+cnn.add(
+    tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu")
+)
 cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=128, kernel_size=3, padding="same", activation="relu"))
+cnn.add(
+    tf.keras.layers.Conv2D(
+        filters=128, kernel_size=3, padding="same", activation="relu"
+    )
+)
 cnn.add(tf.keras.layers.Conv2D(filters=128, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=256, kernel_size=3, padding="same", activation="relu"))
+cnn.add(
+    tf.keras.layers.Conv2D(
+        filters=256, kernel_size=3, padding="same", activation="relu"
+    )
+)
 cnn.add(tf.keras.layers.Conv2D(filters=256, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=512, kernel_size=3, padding="same", activation="relu"))
+cnn.add(
+    tf.keras.layers.Conv2D(
+        filters=512, kernel_size=3, padding="same", activation="relu"
+    )
+)
 cnn.add(tf.keras.layers.Conv2D(filters=512, kernel_size=3, activation="relu"))
 cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
 
@@ -119,7 +136,9 @@ with open("training_hist.json", "w") as f:
 print(training_history.history.keys())
 
 epochs = [i for i in range(1, 11)]
-plt.plot( epochs, training_history.history["accuracy"], color="red", label="Training Accuracy")
+plt.plot(
+    epochs, training_history.history["accuracy"], color="red", label="Training Accuracy"
+)
 plt.plot(
     epochs,
     training_history.history["val_accuracy"],
@@ -130,6 +149,7 @@ plt.xlabel("No. of Epochs")
 plt.title("Visualization of Accuracy Result")
 plt.legend()
 plt.show()
+
 
 class_name = validation_set.class_names
 test_set = tf.keras.utils.image_dataset_from_directory(

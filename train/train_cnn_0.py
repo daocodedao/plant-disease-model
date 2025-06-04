@@ -22,7 +22,7 @@ dataset_path = f"{download_path}/New Plant Diseases Dataset(Augmented)/New Plant
 trainDir = os.path.join(dataset_path, "train")
 
 # 开启 TensorFlow 设备放置日志，方便调试时查看运算在哪个设备上执行
-tf.debugging.set_log_device_placement(True)
+# tf.debugging.set_log_device_placement(True)
 
 print("trainDir:", trainDir)
 # 从训练集目录加载图像数据集

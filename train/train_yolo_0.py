@@ -2,6 +2,8 @@
 from ultralytics import YOLO
 import sys
 
+# https://www.kaggle.com/code/naganithinreddy/yolov9
+
 # ====================== 配置参数 ======================
 DATA_PATH = "./traindata/yolo/yolo_plant_diseases/dataset.yaml"   # 数据集配置文件路径
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）

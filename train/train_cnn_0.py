@@ -13,6 +13,7 @@ from keras.layers import Conv2D, MaxPool2D, Flatten, Dense, Dropout
 from keras import utils as keras_utils
 
 # 从 Kaggle Hub 下载植物病害数据集
+# https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset
 download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
 print("Path to dataset files:", download_path)
 

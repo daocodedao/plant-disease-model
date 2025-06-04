@@ -3,12 +3,14 @@
 对植物病害进行分类。训练完成后，会保存模型，记录训练历史，并可视化训练结果和评估指标。
 """
 import matplotlib.pyplot as plt
-import pandas as pd
 import seaborn as sns
 import tensorflow as tf
 from tensorflow import keras
 import os
 import kagglehub
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPool2D, Flatten, Dense, Dropout
+from keras import utils as keras_utils
 
 # 从 Kaggle Hub 下载植物病害数据集
 download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
@@ -24,7 +26,7 @@ tf.debugging.set_log_device_placement(True)
 
 print("trainDir:", trainDir)
 # 从训练集目录加载图像数据集
-training_set = tf.keras.utils.image_dataset_from_directory(
+training_set = keras_utils.image_dataset_from_directory(
     trainDir,
     labels="inferred",  # 从目录结构推断图像标签
     label_mode="categorical",  # 使用独热编码的标签
@@ -45,7 +47,7 @@ training_set = tf.keras.utils.image_dataset_from_directory(
 validDir = os.path.join(dataset_path, "valid")
 print("validDir:", validDir)
 # 从验证集目录加载图像数据集
-validation_set = tf.keras.utils.image_dataset_from_directory(
+validation_set = keras_utils.image_dataset_from_directory(
     validDir,
     labels="inferred",
     label_mode="categorical",
@@ -63,11 +65,11 @@ validation_set = tf.keras.utils.image_dataset_from_directory(
 )
 
 # 创建一个顺序模型
-cnn = tf.keras.models.Sequential()
+cnn = Sequential()
 
 # 添加卷积层和池化层构建 CNN 模型
 cnn.add(
-    tf.keras.layers.Conv2D(
+    Conv2D(
         filters=32,  # 32 个卷积核
         kernel_size=3,  # 卷积核大小为 3x3
         padding="same",  # 填充使输出尺寸与输入相同
@@ -75,42 +77,40 @@ cnn.add(
         input_shape=[128, 128, 3],  # 输入图像的形状为 128x128x3
     )
 )
-cnn.add(tf.keras.layers.Conv2D(filters=32, kernel_size=3, activation="relu"))
-cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))  # 最大池化层，池化窗口 2x2，步长为 2
+cnn.add(Conv2D(filters=32, kernel_size=3, activation="relu"))
+# 最大池化层，池化窗口 2x2，步长为 2
+cnn.add(MaxPool2D(pool_size=2, strides=2))  
 
-cnn.add(
-    tf.keras.layers.Conv2D(filters=64, kernel_size=3, padding="same", activation="relu")
-)
-cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=3, activation="relu"))
-cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
+cnn.add(Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
+cnn.add(Conv2D(filters=64, kernel_size=3, activation="relu"))
+cnn.add(MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=128, kernel_size=3, padding="same", activation="relu"))
-cnn.add(tf.keras.layers.Conv2D(filters=128, kernel_size=3, activation="relu"))
-cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
+cnn.add(Conv2D(filters=128, kernel_size=3, padding="same", activation="relu"))
+cnn.add(Conv2D(filters=128, kernel_size=3, activation="relu"))
+cnn.add(MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=256, kernel_size=3, padding="same", activation="relu"))
-cnn.add(tf.keras.layers.Conv2D(filters=256, kernel_size=3, activation="relu"))
-cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
+cnn.add(Conv2D(filters=256, kernel_size=3, padding="same", activation="relu"))
+cnn.add(Conv2D(filters=256, kernel_size=3, activation="relu"))
+cnn.add(MaxPool2D(pool_size=2, strides=2))
 
-cnn.add(tf.keras.layers.Conv2D(filters=512, kernel_size=3, padding="same", activation="relu"))
-cnn.add(tf.keras.layers.Conv2D(filters=512, kernel_size=3, activation="relu"))
-cnn.add(tf.keras.layers.MaxPool2D(pool_size=2, strides=2))
+cnn.add(Conv2D(filters=512, kernel_size=3, padding="same", activation="relu"))
+cnn.add(Conv2D(filters=512, kernel_size=3, activation="relu"))
+cnn.add(MaxPool2D(pool_size=2, strides=2))
 
 # 添加 Dropout 层防止过拟合
-cnn.add(tf.keras.layers.Dropout(0.25))
+cnn.add(Dropout(0.25))
 # 将多维数据展平为一维向量
-cnn.add(tf.keras.layers.Flatten())
+cnn.add(Flatten())
 # 添加全连接层
-cnn.add(tf.keras.layers.Dense(units=1500, activation="relu"))
+cnn.add(Dense(units=1500, activation="relu"))
 # 再次添加 Dropout 层防止过拟合
-cnn.add(tf.keras.layers.Dropout(0.4))
+cnn.add(Dropout(0.4))
 
 # 输出层，38 个神经元对应 38 个类别，使用 softmax 激活函数
-cnn.add(tf.keras.layers.Dense(units=38, activation="softmax"))
+cnn.add(Dense(units=38, activation="softmax"))
 
-# 从 TensorFlow Keras 导入 Adam 优化器
-from tensorflow.keras.optimizers import Adam
 
+from keras.optimizers import Adam
 # 编译模型，指定优化器、损失函数和评估指标
 cnn.compile(
     optimizer=Adam(learning_rate=0.0001),  # 使用 Adam 优化器，学习率为 0.0001
@@ -171,7 +171,7 @@ else:
 # 获取验证集的类别名称
 class_name = validation_set.class_names
 # 从验证集目录加载测试数据集
-test_set = tf.keras.utils.image_dataset_from_directory(
+test_set = keras_utils.image_dataset_from_directory(
     validDir,
     labels="inferred",
     label_mode="categorical",

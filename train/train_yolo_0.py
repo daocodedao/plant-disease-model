@@ -4,7 +4,9 @@ import sys
 
 # ====================== 配置参数 ======================
 DATA_PATH = "./traindata/yolo/yolo_plant_diseases/dataset.yaml"   # 数据集配置文件路径
-MODEL_PATH = "yolo11n.pt"                        # 预训练模型路径（可选yolov8n/s/m/l/x.pt）
+# 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
+# Nano（最小）、Small、Medium、Large、Extra Large（最大）
+MODEL_PATH = "yolo11n.pt"                        
 EPOCHS = 100                                     # 训练轮数
 BATCH_SIZE = 16                                  # 批量大小（根据显存调整）
 IMAGE_SIZE = 640                                 # 输入图像尺寸

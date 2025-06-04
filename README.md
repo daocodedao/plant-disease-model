@@ -79,3 +79,16 @@ http://39.105.194.16:8502/
 ```
 python train/train_cnn_0.py
 ```
+
+## yolo
+```
+# 先将 tensorflow keras 的训练集转换为 yolo 的训练集
+python train/conver2yolo_data.py
+
+# 训练
+# GPU NVIDIA RTX A4000 16G 显存
+# 使用 yolo11n.pt 最小的模型 6M，训练时 gpu 内存2.5G
+# 100轮，每轮8分钟左右
+python train/train_yolo_0.py
+
+```

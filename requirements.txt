@@ -17,6 +17,8 @@ seaborn
 kagglehub
 plotly
 scipy
+torch==2.7.0
+torchvision==0.22.0
 # cpu requirements
 tensorflow; sys_platform == "darwin" 
 # gpu requirements

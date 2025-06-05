@@ -9,7 +9,7 @@ import cv2
 # https://www.kaggle.com/code/naganithinreddy/yolov9
 
 # ====================== 配置参数 ======================
-DATA_PATH = "./runs/traindata/yolo/yolo_plant_diseases/dataset.yaml"  # 数据集配置文件路径
+DATA_PATH = "runs/traindata/yolo/yolo_plant_diseases/dataset.yaml"  # 数据集配置文件路径
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
 # Nano（最小）、Small、Medium、Large、Extra Large（最大）
 # MODEL_PATH = "yolo11n.pt"

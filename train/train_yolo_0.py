@@ -23,8 +23,8 @@ DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases_class
 print("DATA_PATH: ", DATA_PATH)
 
 
-# EPOCHS = 100  # 训练轮数
-EPOCHS = 10  # 训练轮数
+EPOCHS = 100  # 训练轮数
+# EPOCHS = 10  # 训练轮数
 if sys.platform.lower() == "darwin":
     EPOCHS = 3
 

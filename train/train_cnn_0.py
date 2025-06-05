@@ -15,6 +15,7 @@ from keras import utils as keras_utils
 # 从 Kaggle Hub 下载植物病害数据集
 # https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset
 download_path = kagglehub.dataset_download("vipoooool/new-plant-diseases-dataset")
+# /Users/linzhiji/.cache/kagglehub/datasets/vipoooool/new-plant-diseases-dataset/versions/2
 print("Path to dataset files:", download_path)
 
 # 定义数据集路径

@@ -6,6 +6,7 @@ __pycache__/
 .vscode/
 logs/
 model/
-traindata/
 yolov8_train/
 training_hist.json
+runs/
+outimage/

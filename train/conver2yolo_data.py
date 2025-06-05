@@ -15,7 +15,7 @@ print("Path to dataset files:", tf_download_path)
 tf_dataset_path = f"{tf_download_path}/New Plant Diseases Dataset(Augmented)/New Plant Diseases Dataset(Augmented)"
 
 INPUT_DATA_DIR = tf_dataset_path  # 输入数据集路径（解压后的根目录）
-OUTPUT_YOLO_DIR = "./traindata/yolo/yolo_plant_diseases"        # 输出YOLO数据集路径
+OUTPUT_YOLO_DIR = "./runs/traindata/yolo/yolo_plant_diseases"        # 输出YOLO数据集路径
 if os.path.exists(OUTPUT_YOLO_DIR):
     shutil.rmtree(OUTPUT_YOLO_DIR)
 os.makedirs(OUTPUT_YOLO_DIR, exist_ok=True)

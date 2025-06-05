@@ -34,7 +34,10 @@ def get_device():
         if gpu_count == 1:
             return "0"  # 1 个 GPU，指定设备编号 0
         elif gpu_count >= 2:
-            return [0, 1]  # 2 个及以上 GPU，返回前两个 GPU 编号
+            # 2 个及以上 GPU，返回前两个 GPU 编号
+            # 有的机器 2个 GPU 同时使用会死机
+            # return [0, 1]  
+            return "0" 
         else:
             return "cpu"  # 没有可用 GPU，使用 CPU
     elif "darwin" in os_name:  # MacOS

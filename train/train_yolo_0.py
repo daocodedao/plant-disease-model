@@ -10,12 +10,19 @@ import cv2
 
 # ====================== 配置参数 ======================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/dataset.yaml")  # 数据集配置文件路径
-print("DATA_PATH: ", DATA_PATH)
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
 # Nano（最小）、Small、Medium、Large、Extra Large（最大）
+
 # MODEL_PATH = "yolo11n.pt"
+# 数据集配置文件路径
+# DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/dataset.yaml")  
+
 MODEL_PATH = "yolo11n-cls.pt"
+DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases_classify/dataset.yaml")  
+
+print("DATA_PATH: ", DATA_PATH)
+
+
 # EPOCHS = 100  # 训练轮数
 EPOCHS = 10  # 训练轮数
 if sys.platform.lower() == "darwin":

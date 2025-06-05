@@ -14,8 +14,8 @@ DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/datas
 print("DATA_PATH: ", DATA_PATH)
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
 # Nano（最小）、Small、Medium、Large、Extra Large（最大）
-# MODEL_PATH = "yolo11n.pt"
-MODEL_PATH = "yolov8n-cls.pt"
+MODEL_PATH = "yolo11n.pt"
+# MODEL_PATH = "yolov8n-cls.pt"
 # EPOCHS = 100  # 训练轮数
 EPOCHS = 10  # 训练轮数
 if sys.platform.lower() == "darwin":

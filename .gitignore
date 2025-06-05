@@ -8,3 +8,4 @@ logs/
 model/
 traindata/
 yolov8_train/
+training_hist.json

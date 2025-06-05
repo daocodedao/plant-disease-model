@@ -69,33 +69,43 @@ validation_set = keras_utils.image_dataset_from_directory(
 cnn = Sequential()
 
 # 添加卷积层和池化层构建 CNN 模型
+# 添加第一个卷积层，输入层接收 128x128 大小的 RGB 图像
 cnn.add(
     Conv2D(
-        filters=32,  # 32 个卷积核
+        filters=32,  # 使用 32 个卷积核，用于提取图像特征
         kernel_size=3,  # 卷积核大小为 3x3
-        padding="same",  # 填充使输出尺寸与输入相同
-        activation="relu",  # 使用 ReLU 激活函数
+        padding="same",  # 填充图像，使卷积层输出尺寸与输入尺寸相同
+        activation="relu",  # 使用 ReLU 激活函数，引入非线性
         input_shape=[128, 128, 3],  # 输入图像的形状为 128x128x3
     )
 )
+# 添加第二个卷积层，进一步提取图像特征
 cnn.add(Conv2D(filters=32, kernel_size=3, activation="relu"))
-# 最大池化层，池化窗口 2x2，步长为 2
+# 最大池化层，池化窗口 2x2，步长为 2，用于降低特征图的维度
 cnn.add(MaxPool2D(pool_size=2, strides=2))  
 
+# 添加第三组卷积层，卷积核数量增加到 64，增强特征提取能力
 cnn.add(Conv2D(filters=64, kernel_size=3, padding="same", activation="relu"))
 cnn.add(Conv2D(filters=64, kernel_size=3, activation="relu"))
+# 最大池化层，进一步降低特征图维度
 cnn.add(MaxPool2D(pool_size=2, strides=2))
 
+# 添加第四组卷积层，卷积核数量增加到 128
 cnn.add(Conv2D(filters=128, kernel_size=3, padding="same", activation="relu"))
 cnn.add(Conv2D(filters=128, kernel_size=3, activation="relu"))
+# 最大池化层
 cnn.add(MaxPool2D(pool_size=2, strides=2))
 
+# 添加第五组卷积层，卷积核数量增加到 256
 cnn.add(Conv2D(filters=256, kernel_size=3, padding="same", activation="relu"))
 cnn.add(Conv2D(filters=256, kernel_size=3, activation="relu"))
+# 最大池化层
 cnn.add(MaxPool2D(pool_size=2, strides=2))
 
+# 添加第六组卷积层，卷积核数量增加到 512
 cnn.add(Conv2D(filters=512, kernel_size=3, padding="same", activation="relu"))
 cnn.add(Conv2D(filters=512, kernel_size=3, activation="relu"))
+# 最大池化层
 cnn.add(MaxPool2D(pool_size=2, strides=2))
 
 # 添加 Dropout 层防止过拟合

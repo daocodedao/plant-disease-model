@@ -66,7 +66,7 @@ def train_yolov8():
         # save_period=10,  # 每多少轮保存一次检查点（与save=True配合使用）
         # half=HALF_PRECISION,  # 启用混合精度
         # device=get_device(),  # 指定训练设备（如"0"或"0,1"多GPU，默认自动选择）
-        # project="runs/yolov8_train",  # 自定义训练结果保存目录
+        project="runs/yolov8_train",  # 自定义训练结果保存目录
         # pretrained=True, # 使用预训练权重
         name=f"plant_diseases_{current_time}",  # 训练任务名称
     )

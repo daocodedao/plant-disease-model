@@ -12,7 +12,8 @@ import cv2
 DATA_PATH = "./runs/traindata/yolo/yolo_plant_diseases/dataset.yaml"  # 数据集配置文件路径
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
 # Nano（最小）、Small、Medium、Large、Extra Large（最大）
-MODEL_PATH = "yolo11n.pt"
+# MODEL_PATH = "yolo11n.pt"
+MODEL_PATH = "yolov8n-cls"
 # EPOCHS = 100  # 训练轮数
 EPOCHS = 10  # 训练轮数
 if sys.platform.lower() == "darwin":
@@ -52,6 +53,7 @@ def train_yolov8():
 
     # 加载预训练模型
     model = YOLO(MODEL_PATH)
+    print(model.help())  # 显示所有可用参数及其默认值
 
     # 开始训练
     results = model.train(
@@ -63,8 +65,9 @@ def train_yolov8():
         # save=not SAVE_BEST_ONLY,  # 是否保存所有检查点（False则仅保存best和last）
         # save_period=10,  # 每多少轮保存一次检查点（与save=True配合使用）
         # half=HALF_PRECISION,  # 启用混合精度
-        device=get_device(),  # 指定训练设备（如"0"或"0,1"多GPU，默认自动选择）
-        project="runs/yolov8_train",  # 自定义训练结果保存目录
+        # device=get_device(),  # 指定训练设备（如"0"或"0,1"多GPU，默认自动选择）
+        # project="runs/yolov8_train",  # 自定义训练结果保存目录
+        # pretrained=True, # 使用预训练权重
         name=f"plant_diseases_{current_time}",  # 训练任务名称
     )
 

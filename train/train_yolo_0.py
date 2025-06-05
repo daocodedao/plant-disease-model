@@ -56,9 +56,9 @@ def train_yolov8():
         project="yolov8_train",  # 自定义训练结果保存目录
         name=f"plant_diseases_{current_time}"  # 训练任务名称
     )
-    best_model_path = results[0].path + '/weights/best.pt'
+
     # 打印训练结果摘要
-    print("训练完成！最优模型保存路径：", best_model_path)
+    print(f"训练完成！最优模型保存路径：{results}")
 
 # ====================== 验证函数 ======================
 def validate_model():

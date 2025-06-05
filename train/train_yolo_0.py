@@ -13,7 +13,8 @@ DATA_PATH = "./runs/traindata/yolo/yolo_plant_diseases/dataset.yaml"  # 数据�
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
 # Nano（最小）、Small、Medium、Large、Extra Large（最大）
 MODEL_PATH = "yolo11n.pt"
-EPOCHS = 100  # 训练轮数
+# EPOCHS = 100  # 训练轮数
+EPOCHS = 10  # 训练轮数
 if sys.platform.lower() == "darwin":
     EPOCHS = 3
 

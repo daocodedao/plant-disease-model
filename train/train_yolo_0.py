@@ -9,8 +9,7 @@ import cv2
 # https://www.kaggle.com/code/naganithinreddy/yolov9
 
 # ====================== 配置参数 ======================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/dataset.yaml")  # 数据集配置文件路径
 print("DATA_PATH: ", DATA_PATH)
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）

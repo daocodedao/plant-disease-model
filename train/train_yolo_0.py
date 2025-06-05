@@ -53,7 +53,7 @@ def train_yolov8():
 
     # 加载预训练模型
     model = YOLO(MODEL_PATH)
-    print(model.help())  # 显示所有可用参数及其默认值
+    # print(model.help)  # 显示所有可用参数及其默认值
 
     # 开始训练
     results = model.train(

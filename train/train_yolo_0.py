@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/dataset.yaml")  
 
 MODEL_PATH = "yolo11n-cls.pt"
-DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases_classify/dataset.yaml")  
+DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases_classify")  
 
 print("DATA_PATH: ", DATA_PATH)
 

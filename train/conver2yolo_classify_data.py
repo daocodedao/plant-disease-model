@@ -82,9 +82,9 @@ def save_dataset(annotations, class_map, output_dir, train_size=0.8):
         f.write(f"val: val\n")      # 验证集路径
         # f.write(f"test: images/test\n")   # 测试集路径（如果有）
         f.write(f"nc: {len(class_map)}\n")  # 类别数
-        f.write("names:\n")
-        for idx, cls in enumerate(class_map.keys()):
-            f.write(f"  {idx}: {cls}\n")
+        # 修改 names 字段输出格式
+        class_names = list(class_map.keys())
+        f.write(f"names: {class_names}\n")
         
     return train_data, val_data
 

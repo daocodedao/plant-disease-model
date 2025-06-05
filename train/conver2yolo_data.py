@@ -144,7 +144,7 @@ if __name__ == "__main__":
         raise FileNotFoundError(f"请先下载数据集并解压到路径：{INPUT_DATA_DIR}")
     
     # 2. 获取类别映射（假设图像按类别存放在子文件夹中，无CSV标注时使用此方法）
-    # 若有CSV标注，需手动指定CSV路径和列名，注释掉下方代码并取消注释parse_csv_annotations部分
+    # 若有CSV标注，需手动指定CSV路径和列名，注释掉下方代码并取消注释 parse_csv_annotations 部分
     class_map = get_class_mapping(os.path.join(INPUT_DATA_DIR, "train"))  # 假设训练集图像在train子文件夹中，每个子文件夹为一个类别
     
     # 3. 解析标注（根据实际情况选择CSV或文件夹分类）
@@ -161,6 +161,7 @@ if __name__ == "__main__":
                 annotations.append({
                     "image_path": img_path,
                     "class_id": idx,
+                    # (0.5, 0.5, 1.0, 1.0) 代表一个边界框，其中心点位于图像正中央，且边界框的宽度和高度与图像的宽度和高度相同，即这个边界框覆盖了整个图像。在代码里，这是弱监督场景下的处理方式，仅用于分类任务，并非精确的目标检测。
                     "bbox": (0.5, 0.5, 1.0, 1.0)  # 全图边界框
                 })
     

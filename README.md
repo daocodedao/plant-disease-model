@@ -89,6 +89,7 @@ python train/conver2yolo_data.py
 # GPU NVIDIA RTX A4000 16G 显存
 # 使用 yolo11n.pt 最小的模型 6M，训练时 gpu 内存2.5G
 # 100轮，每轮8分钟左右
+# ultralytics==8.3.149 yolo11n.pt 训练, 训练数据集结构是什么样的
 python train/train_yolo_0.py
 
 ```

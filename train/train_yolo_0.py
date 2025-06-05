@@ -10,15 +10,19 @@ import cv2
 
 # ====================== 配置参数 ======================
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODE = "Classification"  # 训练模式："Detection" 或 "Classification"
 # 预训练模型路径（可选yolov8 n/s/m/l/x.pt）
 # Nano（最小）、Small、Medium、Large、Extra Large（最大）
+def isModeClassify():
+    return MODE == "Classification"
 
-# MODEL_PATH = "yolo11n.pt"
-# 数据集配置文件路径
-# DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/dataset.yaml")  
-
-MODEL_PATH = "yolo11n-cls.pt"
-DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases_classify")  
+if isModeClassify():
+    MODEL_PATH = "yolo11n-cls.pt"
+    DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases_classify")  
+else:
+    MODEL_PATH = "yolo11n.pt"
+    # 数据集配置文件路径
+    DATA_PATH = os.path.join(BASE_DIR,"runs/traindata/yolo/yolo_plant_diseases/dataset.yaml")  
 
 print("DATA_PATH: ", DATA_PATH)
 
@@ -107,27 +111,44 @@ def validate_model():
 def predict_image(image_path):
     # 加载最优模型
     model = YOLO("model/yolo11n_train.pt")
-    # 推理
-    results = model(image_path, conf=0.25)
-    detected_objects = []
+    if isModeClassify():
+        results = model(image_path, verbose=True)
+        # 4. 处理推理结果
+        for r in results:
+            # r.probs 包含每个类别的概率
+            # r.names 包含类别名称列表
+            # r.top1 是概率最高的类别的索引
+            # r.top5 是概率最高的五个类别的索引
+            
+            predicted_class_id = r.top1
+            predicted_class_name = r.names[predicted_class_id]
+            confidence = r.probs.data[predicted_class_id].item() # 获取置信度
 
-    # 遍历每个推理结果
-    for r in results:
-        # r.boxes 包含检测框信息
-        # r.names 包含类别名称映射
-        # r.boxes.data 包含每个检测框的原始数据 (x1, y1, x2, y2, confidence, class_id)
+            print(f"\n图像: {image_path}")
+            print(f"预测类别: {predicted_class_name} (ID: {predicted_class_id})")
+            print(f"置信度: {confidence:.4f}")
+            return predicted_class_name, confidence
 
-        # 遍历每个检测到的物体
-        for box in r.boxes:
-            class_id = int(box.cls)
-            confidence = float(box.conf)
-            class_name = model.names[class_id]
+    else:
+        # conf: 设置置信度阈值，低于此阈值的检测结果将被忽略
+        # iou: 设置 IoU (交并比) 阈值，用于非极大值抑制 (NMS)
+        # verbose=True 会打印更多详细信息
+        results = model(image_path, conf=0.25, iou=0.7, verbose=True)
+        detected_objects = []
 
-            detected_objects.append({
-                'class_name': class_name,
-                'confidence': confidence
-            })
-    return detected_objects
+        # 遍历每个推理结果
+        for r in results:
+            # 遍历每个检测到的物体
+            for box in r.boxes:
+                class_id = int(box.cls)
+                confidence = float(box.conf)
+                class_name = model.names[class_id]
+
+                detected_objects.append({
+                    'class_name': class_name,
+                    'confidence': confidence
+                })
+        return detected_objects
 
 
 # ====================== 主函数 ======================

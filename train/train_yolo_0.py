@@ -1,7 +1,8 @@
 # 导入YOLOv8库
 from ultralytics import YOLO
 import sys
-
+import torch  # 导入 torch 库用于检测 GPU 数量
+from datetime import datetime
 # https://www.kaggle.com/code/naganithinreddy/yolov9
 
 # ====================== 配置参数 ======================
@@ -19,10 +20,15 @@ HALF_PRECISION = True                            # 启用FP16混合精度
 def get_device():
     """自动检测操作系统并返回设备类型"""
     os_name = sys.platform.lower()
-    
     if "linux" in os_name:
-        # Ubuntu 系统，优先使用 GPU（若可用）
-        return "0"  # 指定 GPU 设备编号，或 "cuda" 自动选择
+        # Ubuntu 系统，检查 GPU 数量
+        gpu_count = torch.cuda.device_count()
+        if gpu_count == 1:
+            return "0"  # 1 个 GPU，指定设备编号 0
+        elif gpu_count >= 2:
+            return [0, 1]  # 2 个及以上 GPU，返回前两个 GPU 编号
+        else:
+            return "cpu"  # 没有可用 GPU，使用 CPU
     elif "darwin" in os_name:  # MacOS
         return "cpu"
     else:
@@ -31,6 +37,8 @@ def get_device():
 
 # ====================== 训练函数 ======================
 def train_yolov8():
+    current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+
     # 加载预训练模型
     model = YOLO(MODEL_PATH)
     
@@ -46,11 +54,11 @@ def train_yolov8():
         half=HALF_PRECISION,  # 启用混合精度
         device=get_device(),           # 指定训练设备（如"0"或"0,1"多GPU，默认自动选择）
         project="yolov8_train",  # 自定义训练结果保存目录
-        name="plant_diseases"  # 训练任务名称
+        name=f"plant_diseases_{current_time}"  # 训练任务名称
     )
-    
+    best_model_path = results[0].path + '/weights/best.pt'
     # 打印训练结果摘要
-    print("训练完成！最优模型保存路径：", model.best)
+    print("训练完成！最优模型保存路径：", best_model_path)
 
 # ====================== 验证函数 ======================
 def validate_model():

@@ -86,25 +86,37 @@ def train_yolov8():
 
     # 打印训练结果摘要
     print(f"训练完成！最优模型保存路径：{results}")
-    # scp -r  -P 10067  fxbox@frp.fxait.com:/data/work/plant-disease-model/yolov8_train/plant_diseases5/weights/last.pt ./model/yolo11n_train.pt 
+    # scp -r  -P 10067  fxbox@frp.fxait.com:/data/work/plant-disease-model/runs/yolov8_train/plant_diseases_20250605_141651/weights/best.pt ./model/yolo11n_train.pt 
 
 # ====================== 验证函数 ======================
 def validate_model():
     # 加载最优模型
     model = YOLO("model/yolo11n_train.pt")
 
-    # 在验证集上评估
-    results = model.val(
-        data=DATA_PATH,
-        imgsz=IMAGE_SIZE,
-        device=get_device(),
-        save_json=True,  # 保存验证结果为JSON文件
-        save_conf=True,  # 保存预测置信度
-    )
-
-    # 打印mAP指标
-    print(f"mAP@50: {results.box.map50:.3f}")
-    print(f"mAP@50-95: {results.box.map:.3f}")
+    if isModeClassify():
+        # 分类模式验证
+        results = model.val(
+            data=DATA_PATH,
+            imgsz=IMAGE_SIZE,
+            device=get_device(),
+            save_json=True,  # 保存验证结果为JSON文件
+            save_conf=True,  # 保存预测置信度
+        )
+        # 打印分类评估指标
+        print(f"Top-1准确率: {results.top1:.3f}")
+        print(f"Top-5准确率: {results.top5:.3f}")
+    else:
+        # 检测模式验证
+        results = model.val(
+            data=DATA_PATH,
+            imgsz=IMAGE_SIZE,
+            device=get_device(),
+            save_json=True,  # 保存验证结果为JSON文件
+            save_conf=True,  # 保存预测置信度
+        )
+        # 打印检测评估指标
+        print(f"mAP@50: {results.box.map50:.3f}")
+        print(f"mAP@50-95: {results.box.map:.3f}")
 
 
 # ====================== 推理函数 ======================
@@ -120,7 +132,7 @@ def predict_image(image_path):
             # r.top1 是概率最高的类别的索引
             # r.top5 是概率最高的五个类别的索引
             
-            predicted_class_id = r.top1
+            predicted_class_id = r.probs.top1
             predicted_class_name = r.names[predicted_class_id]
             confidence = r.probs.data[predicted_class_id].item() # 获取置信度
 
@@ -131,7 +143,7 @@ def predict_image(image_path):
 
     else:
         # conf: 设置置信度阈值，低于此阈值的检测结果将被忽略
-        # iou: 设置 IoU (交并比) 阈值，用于非极大值抑制 (NMS)
+        # iou: 设置 IoU (交并比) 阈值，用于非极大值抑制 (NMS)，它决定了多少重叠的边界框会被视为同一个目标并被抑制。
         # verbose=True 会打印更多详细信息
         results = model(image_path, conf=0.25, iou=0.7, verbose=True)
         detected_objects = []
@@ -154,10 +166,10 @@ def predict_image(image_path):
 # ====================== 主函数 ======================
 if __name__ == "__main__":
     # 1. 训练模型
-    train_yolov8()
+    # train_yolov8()
 
     # 2. 验证模型（可选，训练完成后自动验证，可注释此行）
-    # validate_model()
+    validate_model()
 
     # 3. 推理示例（指定测试图像路径）
-    # predict_image("images/apple_FREC_Scab.JPG")
+    # predict_image("images/Blueberry___healthy.JPG")
